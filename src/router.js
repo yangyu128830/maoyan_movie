@@ -63,6 +63,11 @@ export default new Router({
       path: '/concert_detail/:concertId', // 演唱会详情
       name: 'concert_detail',
       component: ()=> import('@/components/ConcertDetail.vue')
+    },
+    {
+      path: '/user', // 个人中心
+      name: 'user',
+      component: ()=> import('@/views/User.vue')
     }
   ]
 })
