@@ -68,6 +68,11 @@ export default new Router({
       path: '/user', // 个人中心
       name: 'user',
       component: ()=> import('@/views/User.vue')
+    },
+    {
+      path: '/vip', // 会员中心
+      name: 'vip',
+      component: ()=> import('@/views/VipCenter.vue')
     }
   ]
 })
