@@ -15,6 +15,7 @@
             <router-link to="/">正在热映</router-link>
             <router-link to="/release">即将上映</router-link>
             <router-link to="/concert">演唱会</router-link>
+            <router-link to="/play">玩乐</router-link>
             <router-link to="/vip">会员中心</router-link>
             <router-link to="/user">个人中心</router-link>
           </div>
