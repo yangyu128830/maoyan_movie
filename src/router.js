@@ -52,6 +52,17 @@ export default new Router({
       path: '/search', // 
       name: 'search',
       component: ()=> import('@/components/search.vue')
+    },
+    {
+
+      path: '/concert', // 演唱会专区
+      name: 'concert',
+      component: ()=> import('@/components/Concert.vue')
+    },
+    {
+      path: '/concert_detail/:concertId', // 演唱会详情
+      name: 'concert_detail',
+      component: ()=> import('@/components/ConcertDetail.vue')
     }
   ]
 })
