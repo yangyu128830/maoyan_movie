@@ -73,6 +73,11 @@ export default new Router({
       path: '/vip', // 会员中心
       name: 'vip',
       component: ()=> import('@/views/VipCenter.vue')
+    },
+    {
+      path: '/play', // 玩乐板块
+      name: 'play',
+      component: ()=> import('@/components/Play.vue')
     }
   ]
 })
