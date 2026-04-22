@@ -52,29 +52,119 @@
 <script>
 // @ is an alias to /src
 import myButton from "@/components/myButton.vue";
+
+const mockMovieList = [
+    {
+        id: 1001,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chinese%20sci-fi%20movie%20poster%20wandering%20earth%203%20space%20epic&image_size=square_hd",
+        nm: "流浪地球3",
+        version: "v3d imax",
+        sc: 9.5,
+        preShow: true,
+        star: "吴京、刘德华、李雪健",
+        showInfo: "今天 150家影院放映"
+    },
+    {
+        id: 1002,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fast%20and%20furious%2011%20movie%20poster%20sports%20cars%20racing%20action&image_size=square_hd",
+        nm: "速度与激情11",
+        version: "v3d imax",
+        sc: 8.8,
+        preShow: true,
+        star: "范·迪塞尔、杰森·斯坦森",
+        showInfo: "今天 120家影院放映"
+    },
+    {
+        id: 1003,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=avengers%205%20marvel%20superhero%20movie%20poster%20epic%20battle&image_size=square_hd",
+        nm: "复仇者联盟5：秘密战争",
+        version: "v3d imax",
+        sc: 9.2,
+        preShow: true,
+        star: "小罗伯特·唐尼、克里斯·埃文斯",
+        showInfo: "今天 180家影院放映"
+    },
+    {
+        id: 1004,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=zootopia%202%20disney%20animation%20movie%20poster%20cute%20rabbit%20fox&image_size=square_hd",
+        nm: "疯狂动物城2",
+        version: "v2d imax",
+        sc: 9.1,
+        preShow: true,
+        star: "金妮弗·古德温、杰森·贝特曼",
+        showInfo: "今天 90家影院放映"
+    },
+    {
+        id: 1005,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=spider%20man%20beyond%20the%20spider%20verse%20movie%20poster%20animation%20colorful&image_size=square_hd",
+        nm: "蜘蛛侠：穿越多元宇宙",
+        version: "v3d imax",
+        sc: 9.3,
+        preShow: true,
+        star: "沙梅克·摩尔、海莉·斯坦菲尔德",
+        showInfo: "今天 110家影院放映"
+    },
+    {
+        id: 1006,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=detective%20chinatown%204%20movie%20poster%20comedy%20mystery%20chinese&image_size=square_hd",
+        nm: "唐人街探案4",
+        version: "v2d imax",
+        sc: 8.5,
+        preShow: true,
+        star: "王宝强、刘昊然",
+        showInfo: "今天 160家影院放映"
+    },
+    {
+        id: 1007,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=godzilla%20x%20kong%20new%20empire%20movie%20poster%20monsters%20battle&image_size=square_hd",
+        nm: "哥斯拉大战金刚3",
+        version: "v3d imax",
+        sc: 8.2,
+        preShow: true,
+        star: "丽贝卡·豪尔、布莱恩·泰里·亨利",
+        showInfo: "今天 130家影院放映"
+    },
+    {
+        id: 1008,
+        img: "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=inside%20out%202%20disney%20pixar%20movie%20poster%20emotions%20colorful%20animation&image_size=square_hd",
+        nm: "头脑特工队2",
+        version: "v3d imax",
+        sc: 9.0,
+        preShow: true,
+        star: "艾米·波勒、玛雅·霍克",
+        showInfo: "今天 85家影院放映"
+    }
+];
+
 export default {
     name: "Hotshow",
     created() {
         let that = this;
-        // http://m.maoyan.com =>  /
-        // 请求 --> 本地服务器(webpack 的devServer) --> 猫眼的服务器
         this.axios.get("/ajax/movieOnInfoList").then(res => {
-            this.movieList = res.data.movieList;
-            this.movieIds = res.data.movieIds;
+            if (res.data && res.data.movieList && res.data.movieList.length > 0) {
+                this.movieList = res.data.movieList;
+                this.movieIds = res.data.movieIds;
+            } else {
+                this.movieList = mockMovieList;
+                this.movieIds = mockMovieList.map(m => m.id);
+            }
             document.addEventListener(
                 "scroll",
                 this.fangdou(function() {
                     that.getMoreInfo(this.movieIds);
                 }, 500)
             );
+        }).catch(() => {
+            this.movieList = mockMovieList;
+            this.movieIds = mockMovieList.map(m => m.id);
         });
         this.$store.commit("changeHt", "飞猪电影");
     },
     data() {
         return {
-            movieList: [],
+            movieList: mockMovieList,
             title: ["购票", "预售"],
-            movieIds: [],
+            movieIds: mockMovieList.map(m => m.id),
             coming: []
         };
     },
