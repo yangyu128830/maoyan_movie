@@ -22,7 +22,6 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "mint-ui": "^2.2.13",
-    "node-sass": "^4.9.0",
     "qs": "^6.6.0",
     "sass": "^1.99.0",
     "sass-loader": "^10.5.2",
