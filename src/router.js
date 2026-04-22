@@ -78,6 +78,21 @@ export default new Router({
       path: '/play', // 玩乐板块
       name: 'play',
       component: ()=> import('@/components/Play.vue')
+    },
+    {
+      path: '/attraction_detail/:attractionId', // 景点详情
+      name: 'attraction_detail',
+      component: ()=> import('@/components/AttractionDetail.vue')
+    },
+    {
+      path: '/performance_detail/:performanceId', // 演出详情
+      name: 'performance_detail',
+      component: ()=> import('@/components/PerformanceDetail.vue')
+    },
+    {
+      path: '/nearby_detail/:nearbyId', // 附近玩乐详情
+      name: 'nearby_detail',
+      component: ()=> import('@/components/NearbyDetail.vue')
     }
   ]
 })
