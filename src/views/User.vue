@@ -24,7 +24,7 @@
         <div class="user-info-card" v-if="!isEditing">
             <div class="card-header">
                 <h3>个人信息</h3>
-                <button class="edit-btn" @click="isEditing = true">编辑</button>
+                <button class="edit-btn" @click="editUserInfo">编辑</button>
             </div>
             <div class="info-list">
                 <div class="info-item">
@@ -290,11 +290,21 @@ export default {
             this.isEditing = true;
         },
         saveUserInfo() {
-            this.userInfo.nickname = this.editForm.nickname;
-            this.userInfo.gender = this.editForm.gender;
-            this.userInfo.birthday = this.editForm.birthday;
-            this.userInfo.phone = this.editForm.phone;
-            this.userInfo.email = this.editForm.email;
+            if (this.editForm.nickname && this.editForm.nickname.trim() !== '') {
+                this.userInfo.nickname = this.editForm.nickname;
+            }
+            if (this.editForm.gender && this.editForm.gender !== '') {
+                this.userInfo.gender = this.editForm.gender;
+            }
+            if (this.editForm.birthday && this.editForm.birthday !== '') {
+                this.userInfo.birthday = this.editForm.birthday;
+            }
+            if (this.editForm.phone && this.editForm.phone.trim() !== '') {
+                this.userInfo.phone = this.editForm.phone;
+            }
+            if (this.editForm.email && this.editForm.email.trim() !== '') {
+                this.userInfo.email = this.editForm.email;
+            }
             this.isEditing = false;
             this.$toast('保存成功');
         },
