@@ -14,5 +14,12 @@ module.exports = {
     //       }
     //   }
   },
-  lintOnSave: true
+  lintOnSave: true,
+  css: {
+    loaderOptions: {
+      sass: {
+        implementation: require('sass')
+      }
+    }
+  }
 }

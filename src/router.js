@@ -52,6 +52,11 @@ export default new Router({
       path: '/search', // 
       name: 'search',
       component: ()=> import('@/components/search.vue')
+    },
+    {
+      path: '/concert', // 演唱会页面
+      name: 'concert',
+      component: ()=> import('@/views/Concert.vue')
     }
   ]
 })
