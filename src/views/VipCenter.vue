@@ -53,7 +53,7 @@
         </div>
 
         <div class="quick-actions">
-            <div class="action-item" @click="activeTab = 'tickets'">
+            <div class="action-item" @click="goToVipTickets">
                 <div class="action-icon">🎫</div>
                 <span class="action-text">演出票特价</span>
             </div>
@@ -498,6 +498,12 @@ export default {
             setTimeout(() => {
                 this.showToast = false;
             }, 2500);
+        },
+        goToVipTickets() {
+            this.$router.push({
+                path: '/vip-tickets',
+                name: 'vip-tickets'
+            });
         }
     }
 };
