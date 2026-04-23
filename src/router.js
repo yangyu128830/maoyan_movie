@@ -113,6 +113,16 @@ export default new Router({
       path: '/vip-tickets', // 会员演出票特价
       name: 'vip-tickets',
       component: ()=> import('@/views/VipTickets.vue')
+    },
+    {
+      path: '/buy-benefit', // 购票优惠
+      name: 'buy-benefit',
+      component: ()=> import('@/views/BuyBenefit.vue')
+    },
+    {
+      path: '/birthday-benefit', // 生日礼包
+      name: 'birthday-benefit',
+      component: ()=> import('@/views/BirthdayBenefit.vue')
     }
   ]
 })
