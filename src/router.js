@@ -108,6 +108,11 @@ export default new Router({
       path: '/records', // 消费记录
       name: 'records',
       component: ()=> import('@/views/Records.vue')
+    },
+    {
+      path: '/vip-tickets', // 会员演出票特价
+      name: 'vip-tickets',
+      component: ()=> import('@/views/VipTickets.vue')
     }
   ]
 })
