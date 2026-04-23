@@ -65,7 +65,7 @@
                 <div class="action-icon">🎁</div>
                 <span class="action-text">我的卡包</span>
             </div>
-            <div class="action-item" @click="showPointsMall = true">
+            <div class="action-item" @click="goToPointsMall">
                 <div class="action-icon">⭐</div>
                 <span class="action-text">积分商城</span>
             </div>
@@ -248,7 +248,6 @@ export default {
             ticketFilter: 'all',
             showLevelGuide: false,
             showMyCoupons: false,
-            showPointsMall: false,
             showAllBenefits: false,
             couponsTab: 'available',
             showToast: false,
@@ -503,6 +502,12 @@ export default {
             this.$router.push({
                 path: '/vip-tickets',
                 name: 'vip-tickets'
+            });
+        },
+        goToPointsMall() {
+            this.$router.push({
+                path: '/points',
+                name: 'points'
             });
         }
     }

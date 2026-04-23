@@ -15,7 +15,68 @@
                     <span class="stat-value expense">-{{pointsInfo.totalUsed}}</span>
                 </div>
             </div>
-            <button class="exchange-btn" @click="showExchangeModal = true">去兑换</button>
+            <div class="header-actions">
+                <button class="sign-btn" :class="{'signed': isTodaySigned}" @click="handleSignIn">
+                    <span v-if="!isTodaySigned">立即签到</span>
+                    <span v-else>已签到</span>
+                </button>
+                <button class="exchange-btn" @click="showExchangeModal = true">去兑换</button>
+            </div>
+        </div>
+
+        <div class="sign-section">
+            <div class="sign-info">
+                <div class="sign-streak">
+                    <span class="streak-label">连续签到</span>
+                    <span class="streak-days">{{signInInfo.streak}}天</span>
+                </div>
+                <div class="sign-reward">
+                    <span class="reward-label">今日可获</span>
+                    <span class="reward-points">+{{getTodayReward()}}积分</span>
+                </div>
+            </div>
+            <div class="sign-calendar">
+                <div class="calendar-header">
+                    <span>签到日历</span>
+                    <span class="month">{{currentMonth}}</span>
+                </div>
+                <div class="calendar-week">
+                    <span class="week-day" v-for="day in weekDays" :key="day">{{day}}</span>
+                </div>
+                <div class="calendar-days">
+                    <div 
+                        class="calendar-day" 
+                        v-for="(day, index) in calendarDays" 
+                        :key="index"
+                        :class="{'signed': day.isSigned, 'today': day.isToday, 'empty': day.isEmpty}"
+                    >
+                        <span v-if="!day.isEmpty">{{day.day}}</span>
+                        <span class="check-icon" v-if="day.isSigned">✓</span>
+                    </div>
+                </div>
+            </div>
+            <div class="streak-rewards">
+                <div class="rewards-header">
+                    <span>连续签到奖励</span>
+                </div>
+                <div class="rewards-list">
+                    <div 
+                        class="reward-item" 
+                        v-for="(reward, index) in streakRewards" 
+                        :key="index"
+                        :class="{'achieved': signInInfo.streak >= reward.days}"
+                    >
+                        <div class="reward-icon">
+                            <span v-if="signInInfo.streak >= reward.days">🎁</span>
+                            <span v-else>🔒</span>
+                        </div>
+                        <div class="reward-info">
+                            <span class="reward-days">连续{{reward.days}}天</span>
+                            <span class="reward-points-text">+{{reward.points}}积分</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="record-section">
@@ -53,14 +114,32 @@
                     <h3>积分兑换</h3>
                     <span class="close-btn" @click="showExchangeModal = false">×</span>
                 </div>
-                <div class="exchange-tabs">
-                    <span class="tab-item" :class="{'active': exchangeTab === 'movies'}" @click="exchangeTab = 'movies'">电影票</span>
-                    <span class="tab-item" :class="{'active': exchangeTab === 'gifts'}" @click="exchangeTab = 'gifts'">精美礼品</span>
-                    <span class="tab-item" :class="{'active': exchangeTab === 'coupons'}" @click="exchangeTab = 'coupons'">优惠券</span>
-                    <span class="tab-item" :class="{'active': exchangeTab === 'privileges'}" @click="exchangeTab = 'privileges'">特权</span>
+                <div class="exchange-category-tabs">
+                    <div class="category-tab-item" :class="{'active': exchangeCategory === 'coupons'}" @click="exchangeCategory = 'coupons'">
+                        <span class="category-icon">🎫</span>
+                        <span class="category-name">优惠券/代金券</span>
+                    </div>
+                    <div class="category-tab-item" :class="{'active': exchangeCategory === 'gifts'}" @click="exchangeCategory = 'gifts'">
+                        <span class="category-icon">🎁</span>
+                        <span class="category-name">礼品/现金红包</span>
+                    </div>
+                </div>
+                <div class="exchange-sub-tabs" v-if="exchangeCategory === 'coupons'">
+                    <span class="sub-tab-item" :class="{'active': exchangeTab === 'movieCoupons'}" @click="exchangeTab = 'movieCoupons'">电影优惠券</span>
+                    <span class="sub-tab-item" :class="{'active': exchangeTab === 'vouchers'}" @click="exchangeTab = 'vouchers'">代金券</span>
+                </div>
+                <div class="exchange-sub-tabs" v-else>
+                    <span class="sub-tab-item" :class="{'active': exchangeTab === 'gifts'}" @click="exchangeTab = 'gifts'">精美礼品</span>
+                    <span class="sub-tab-item" :class="{'active': exchangeTab === 'redPackets'}" @click="exchangeTab = 'redPackets'">现金红包</span>
+                </div>
+                <div class="exchange-filter">
+                    <span class="filter-label">排序：</span>
+                    <span class="filter-item" :class="{'active': sortBy === 'default'}" @click="sortBy = 'default'">默认</span>
+                    <span class="filter-item" :class="{'active': sortBy === 'pointsAsc'}" @click="sortBy = 'pointsAsc'">积分从低到高</span>
+                    <span class="filter-item" :class="{'active': sortBy === 'pointsDesc'}" @click="sortBy = 'pointsDesc'">积分从高到低</span>
                 </div>
                 <div class="exchange-list">
-                    <div class="exchange-item" v-for="(item, index) in currentExchangeList" :key="index">
+                    <div class="exchange-item" v-for="(item, index) in sortedExchangeList" :key="item.id">
                         <div class="item-img">
                             <img :src="item.img" alt="">
                         </div>
@@ -75,6 +154,9 @@
                         <button class="exchange-btn-item" :class="{'disabled': isExchangeDisabled(item)}" @click="handleExchange(item)">
                             {{getExchangeButtonText(item)}}
                         </button>
+                    </div>
+                    <div class="no-exchange-items" v-if="sortedExchangeList.length === 0">
+                        <p>暂无兑换商品</p>
                     </div>
                 </div>
                 <div class="my-exchanges">
@@ -114,6 +196,18 @@ export default {
                 totalEarned: 5680,
                 totalUsed: 3100
             },
+            signInInfo: {
+                streak: 5,
+                lastSignDate: null,
+                signedDates: []
+            },
+            weekDays: ['日', '一', '二', '三', '四', '五', '六'],
+            streakRewards: [
+                { days: 3, points: 20 },
+                { days: 7, points: 50 },
+                { days: 15, points: 100 },
+                { days: 30, points: 300 }
+            ],
             pointsRecordType: 'all',
             pointsRecords: [
                 {
@@ -190,70 +284,12 @@ export default {
                 }
             ],
             showExchangeModal: false,
-            exchangeTab: 'movies',
-            exchangeMovies: [
+            exchangeCategory: 'coupons',
+            exchangeTab: 'movieCoupons',
+            sortBy: 'default',
+            movieCoupons: [
                 {
-                    id: 1,
-                    name: '普通厅电影票',
-                    description: '可兑换2D/3D普通厅电影票一张',
-                    points: 500,
-                    stock: 100,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=movie%20ticket%20red%20cinema%20ticket%20icon&image_size=square_hd'
-                },
-                {
-                    id: 2,
-                    name: 'IMAX电影票',
-                    description: '可兑换IMAX厅电影票一张',
-                    points: 800,
-                    stock: 50,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=imax%20cinema%20ticket%20premium%20golden&image_size=square_hd'
-                },
-                {
-                    id: 3,
-                    name: '情侣套票',
-                    description: '可兑换2张普通厅电影票+爆米花套餐',
-                    points: 1200,
-                    stock: 30,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=couple%20movie%20tickets%20popcorn%20romantic&image_size=square_hd'
-                }
-            ],
-            exchangeGifts: [
-                {
-                    id: 1,
-                    name: '电影周边礼盒',
-                    description: '包含海报、钥匙扣、明信片等精美周边',
-                    points: 800,
-                    stock: 20,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=movie%20gift%20box%20merchandise%20poster%20keychain&image_size=square_hd'
-                },
-                {
-                    id: 2,
-                    name: '漫威英雄手办',
-                    description: '正版漫威超级英雄限量手办一个',
-                    points: 2000,
-                    stock: 10,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=marvel%20superhero%20action%20figure%20toy&image_size=square_hd'
-                },
-                {
-                    id: 3,
-                    name: '迪士尼玩偶',
-                    description: '正版迪士尼毛绒玩偶一个',
-                    points: 1500,
-                    stock: 15,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=disney%20plush%20toy%20cute%20mickey&image_size=square_hd'
-                },
-                {
-                    id: 4,
-                    name: '蓝牙耳机',
-                    description: '高品质无线蓝牙耳机一副',
-                    points: 3000,
-                    stock: 5,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=wireless%20bluetooth%20earbuds%20white%20premium&image_size=square_hd'
-                }
-            ],
-            exchangeCoupons: [
-                {
-                    id: 1,
+                    id: 101,
                     name: '10元电影优惠券',
                     description: '购票满30元可用，有效期30天',
                     points: 100,
@@ -261,7 +297,7 @@ export default {
                     img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=10%20yuan%20coupon%20ticket%20voucher&image_size=square_hd'
                 },
                 {
-                    id: 2,
+                    id: 102,
                     name: '20元电影优惠券',
                     description: '购票满50元可用，有效期30天',
                     points: 200,
@@ -269,7 +305,7 @@ export default {
                     img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=20%20yuan%20coupon%20ticket%20voucher%20golden&image_size=square_hd'
                 },
                 {
-                    id: 3,
+                    id: 103,
                     name: '50元电影优惠券',
                     description: '购票满100元可用，有效期30天',
                     points: 500,
@@ -277,7 +313,41 @@ export default {
                     img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=50%20yuan%20coupon%20premium%20ticket%20voucher&image_size=square_hd'
                 },
                 {
-                    id: 4,
+                    id: 104,
+                    name: 'IMAX专享优惠券',
+                    description: 'IMAX场次专用，满150减40',
+                    points: 300,
+                    stock: 100,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=imax%20cinema%20coupon%20premium%20ticket&image_size=square_hd'
+                }
+            ],
+            vouchers: [
+                {
+                    id: 201,
+                    name: '50元代金券',
+                    description: '全场通用，无门槛使用',
+                    points: 500,
+                    stock: 100,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=50%20yuan%20voucher%20golden%20ticket&image_size=square_hd'
+                },
+                {
+                    id: 202,
+                    name: '100元代金券',
+                    description: '全场通用，无门槛使用',
+                    points: 1000,
+                    stock: 50,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=100%20yuan%20voucher%20premium%20golden&image_size=square_hd'
+                },
+                {
+                    id: 203,
+                    name: '200元代金券',
+                    description: '全场通用，无门槛使用',
+                    points: 2000,
+                    stock: 30,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=200%20yuan%20voucher%20luxury%20golden&image_size=square_hd'
+                },
+                {
+                    id: 204,
                     name: '爆米花兑换券',
                     description: '可兑换中桶爆米花一份',
                     points: 80,
@@ -285,38 +355,88 @@ export default {
                     img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=popcorn%20bucket%20cinema%20snack&image_size=square_hd'
                 }
             ],
-            exchangePrivileges: [
+            exchangeGifts: [
                 {
-                    id: 1,
-                    name: '线下免排队特权',
-                    description: '可享受一次线下购票/取餐免排队特权',
-                    points: 300,
-                    stock: 0,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=vip%20fast%20pass%20skip%20line%20privilege&image_size=square_hd'
+                    id: 301,
+                    name: '电影周边礼盒',
+                    description: '包含海报、钥匙扣、明信片等精美周边',
+                    points: 800,
+                    stock: 20,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=movie%20gift%20box%20merchandise%20poster%20keychain&image_size=square_hd'
                 },
                 {
-                    id: 2,
-                    name: '黄金座位预留',
-                    description: '购票时可优先选择黄金座位',
-                    points: 200,
+                    id: 302,
+                    name: '漫威英雄手办',
+                    description: '正版漫威超级英雄限量手办一个',
+                    points: 2000,
+                    stock: 10,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=marvel%20superhero%20action%20figure%20toy&image_size=square_hd'
+                },
+                {
+                    id: 303,
+                    name: '迪士尼玩偶',
+                    description: '正版迪士尼毛绒玩偶一个',
+                    points: 1500,
+                    stock: 15,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=disney%20plush%20toy%20cute%20mickey&image_size=square_hd'
+                },
+                {
+                    id: 304,
+                    name: '蓝牙耳机',
+                    description: '高品质无线蓝牙耳机一副',
+                    points: 3000,
+                    stock: 5,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=wireless%20bluetooth%20earbuds%20white%20premium&image_size=square_hd'
+                },
+                {
+                    id: 305,
+                    name: '电影主题T恤',
+                    description: '限量版电影主题纯棉T恤一件',
+                    points: 600,
                     stock: 50,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=golden%20cinema%20seat%20premium%20location&image_size=square_hd'
-                },
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=movie%20theme%20tshirt%20black%20cinema&image_size=square_hd'
+                }
+            ],
+            redPackets: [
                 {
-                    id: 3,
-                    name: '提前购票特权',
-                    description: '新片上映可提前3天购票',
-                    points: 150,
-                    stock: 100,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=early%20access%20ticket%20calendar%20booking&image_size=square_hd'
-                },
-                {
-                    id: 4,
-                    name: '生日双倍积分',
-                    description: '生日当月购票享双倍积分',
+                    id: 401,
+                    name: '1元现金红包',
+                    description: '直接发放到账户余额',
                     points: 100,
+                    stock: 500,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=red%20envelope%20money%20cash%20gift&image_size=square_hd'
+                },
+                {
+                    id: 402,
+                    name: '5元现金红包',
+                    description: '直接发放到账户余额',
+                    points: 500,
+                    stock: 300,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=red%20envelope%205%20yuan%20money%20gift&image_size=square_hd'
+                },
+                {
+                    id: 403,
+                    name: '10元现金红包',
+                    description: '直接发放到账户余额',
+                    points: 1000,
                     stock: 200,
-                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=birthday%20cake%20double%20points%20celebration&image_size=square_hd'
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=red%20envelope%2010%20yuan%20money%20gift&image_size=square_hd'
+                },
+                {
+                    id: 404,
+                    name: '20元现金红包',
+                    description: '直接发放到账户余额',
+                    points: 2000,
+                    stock: 100,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=red%20envelope%2020%20yuan%20money%20gift&image_size=square_hd'
+                },
+                {
+                    id: 405,
+                    name: '50元现金红包',
+                    description: '直接发放到账户余额，VIP专属',
+                    points: 5000,
+                    stock: 50,
+                    img: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=red%20envelope%2050%20yuan%20premium%20money&image_size=square_hd'
                 }
             ],
             myExchanges: [
@@ -359,20 +479,122 @@ export default {
         },
         currentExchangeList() {
             switch (this.exchangeTab) {
-                case 'movies':
-                    return this.exchangeMovies;
+                case 'movieCoupons':
+                    return this.movieCoupons;
+                case 'vouchers':
+                    return this.vouchers;
                 case 'gifts':
                     return this.exchangeGifts;
-                case 'coupons':
-                    return this.exchangeCoupons;
-                case 'privileges':
-                    return this.exchangePrivileges;
+                case 'redPackets':
+                    return this.redPackets;
                 default:
                     return [];
             }
+        },
+        sortedExchangeList() {
+            let list = [...this.currentExchangeList];
+            
+            switch (this.sortBy) {
+                case 'pointsAsc':
+                    list.sort((a, b) => a.points - b.points);
+                    break;
+                case 'pointsDesc':
+                    list.sort((a, b) => b.points - a.points);
+                    break;
+                default:
+                    break;
+            }
+            
+            return list;
+        },
+        isTodaySigned() {
+            const today = this.getDateKey(new Date());
+            return this.signInInfo.signedDates.includes(today);
+        },
+        currentMonth() {
+            const now = new Date();
+            return `${now.getFullYear()}年${now.getMonth() + 1}月`;
+        },
+        calendarDays() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const firstDayOfWeek = firstDay.getDay();
+            
+            const days = [];
+            
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                days.push({ day: '', isEmpty: true, isSigned: false, isToday: false });
+            }
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const date = new Date(year, month, i);
+                const dateKey = this.getDateKey(date);
+                const isToday = this.getDateKey(new Date()) === dateKey;
+                const isSigned = this.signInInfo.signedDates.includes(dateKey);
+                
+                days.push({
+                    day: i,
+                    isEmpty: false,
+                    isSigned: isSigned,
+                    isToday: isToday
+                });
+            }
+            
+            return days;
         }
     },
     methods: {
+        getDateKey(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        },
+        getTodayReward() {
+            const baseReward = 10;
+            const streakReward = Math.min(this.signInInfo.streak * 2, 20);
+            return baseReward + streakReward;
+        },
+        handleSignIn() {
+            if (this.isTodaySigned) {
+                this.$toast('今日已签到，请明天再来~');
+                return;
+            }
+
+            const today = this.getDateKey(new Date());
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayKey = this.getDateKey(yesterday);
+
+            if (this.signInInfo.signedDates.includes(yesterdayKey)) {
+                this.signInInfo.streak++;
+            } else {
+                this.signInInfo.streak = 1;
+            }
+
+            this.signInInfo.signedDates.push(today);
+            this.signInInfo.lastSignDate = today;
+
+            const reward = this.getTodayReward();
+            this.pointsInfo.points += reward;
+            this.pointsInfo.totalEarned += reward;
+
+            this.pointsRecords.unshift({
+                id: Date.now(),
+                type: 'income',
+                icon: '✨',
+                title: '每日签到',
+                description: `连续签到第${this.signInInfo.streak}天`,
+                amount: reward,
+                time: this.formatTime(new Date())
+            });
+
+            this.$toast(`签到成功！获得 ${reward} 积分`);
+        },
         isExchangeDisabled(item) {
             return item.stock === 0 || this.pointsInfo.points < item.points;
         },
@@ -498,15 +720,214 @@ export default {
     }
 }
 
-.exchange-btn {
-    background: #fff;
-    color: #fa709a;
+.header-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.sign-btn {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: #fff;
     border: none;
-    padding: 12px 40px;
+    padding: 12px 30px;
     border-radius: 20px;
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.signed {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+}
+
+.exchange-btn {
+    background: #fff;
+    color: #fa709a;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.sign-section {
+    background: #fff;
+    margin: 15px;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.sign-info {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, #fff5f7 0%, #fff0f3 100%);
+    border-radius: 10px;
+}
+
+.sign-streak,
+.sign-reward {
+    text-align: center;
+}
+
+.streak-label,
+.reward-label {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 5px;
+}
+
+.streak-days {
+    font-size: 24px;
+    font-weight: bold;
+    color: #E54847;
+}
+
+.reward-points {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4caf50;
+}
+
+.sign-calendar {
+    margin-bottom: 20px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    span {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .month {
+        font-size: 12px;
+        color: #999;
+        font-weight: normal;
+    }
+}
+
+.calendar-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 10px;
+}
+
+.week-day {
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    padding: 5px 0;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #333;
+    position: relative;
+
+    &.empty {
+        background: none;
+    }
+
+    &.today {
+        background: #fff5f5;
+        border: 2px solid #E54847;
+        font-weight: bold;
+        color: #E54847;
+    }
+
+    &.signed {
+        background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
+        color: #fff;
+
+        .check-icon {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+    }
+}
+
+.streak-rewards {
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.rewards-header {
+    margin-bottom: 15px;
+
+    span {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+    }
+}
+
+.rewards-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.reward-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 5px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+
+    &.achieved {
+        opacity: 1;
+        background: #fff5f5;
+    }
+}
+
+.reward-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.reward-info {
+    text-align: center;
+}
+
+.reward-days {
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.reward-points-text {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #E54847;
 }
 
 .record-section {
@@ -659,27 +1080,100 @@ export default {
     }
 }
 
-.exchange-tabs {
+.exchange-category-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.category-tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 10px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+
+    &.active {
+        background: #fff5f5;
+        border-color: #E54847;
+    }
+}
+
+.category-icon {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.category-name {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+}
+
+.exchange-sub-tabs {
     display: flex;
     margin-bottom: 15px;
     border-bottom: 1px solid #f0f0f0;
+}
 
-    .tab-item {
-        flex: 1;
-        text-align: center;
-        padding: 10px;
-        font-size: 13px;
-        color: #666;
-        cursor: pointer;
-        border-bottom: 2px solid transparent;
-        transition: all 0.3s ease;
-        border-radius: 0;
+.sub-tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
 
-        &.active {
-            background: none;
-            color: #E54847;
-            border-bottom-color: #E54847;
-        }
+    &.active {
+        color: #E54847;
+        border-bottom-color: #E54847;
+        font-weight: bold;
+    }
+}
+
+.exchange-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 8px;
+}
+
+.filter-label {
+    font-size: 12px;
+    color: #666;
+}
+
+.filter-item {
+    font-size: 12px;
+    color: #999;
+    padding: 4px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &.active {
+        background: #E54847;
+        color: #fff;
+    }
+}
+
+.no-exchange-items {
+    text-align: center;
+    padding: 40px 0;
+
+    p {
+        font-size: 14px;
+        color: #999;
     }
 }
 
