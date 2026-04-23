@@ -93,6 +93,21 @@ export default new Router({
       path: '/nearby_detail/:nearbyId', // 附近玩乐详情
       name: 'nearby_detail',
       component: ()=> import('@/components/NearbyDetail.vue')
+    },
+    {
+      path: '/balance', // 余额详情
+      name: 'balance',
+      component: ()=> import('@/views/Balance.vue')
+    },
+    {
+      path: '/points', // 积分详情
+      name: 'points',
+      component: ()=> import('@/views/Points.vue')
+    },
+    {
+      path: '/records', // 消费记录
+      name: 'records',
+      component: ()=> import('@/views/Records.vue')
     }
   ]
 })
