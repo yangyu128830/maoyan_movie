@@ -139,7 +139,7 @@
                     <span class="filter-item" :class="{'active': sortBy === 'pointsDesc'}" @click="sortBy = 'pointsDesc'">积分从高到低</span>
                 </div>
                 <div class="exchange-list">
-                    <div class="exchange-item" v-for="(item, index) in sortedExchangeList" :key="item.id">
+                    <div class="exchange-item" v-for="item in sortedExchangeList" :key="item.id">
                         <div class="item-img">
                             <img :src="item.img" alt="">
                         </div>

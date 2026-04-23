@@ -27,7 +27,7 @@
                 <span class="coupon-count">已领 {{couponStats.claimed}}/{{couponStats.total}}</span>
             </div>
             <div class="coupon-grid">
-                <div class="coupon-card" v-for="(coupon, index) in userCoupons" :key="coupon.id">
+                <div class="coupon-card" v-for="coupon in userCoupons" :key="coupon.id">
                     <div class="coupon-left" :style="{'background': getCouponColor(coupon)}">
                         <div class="coupon-value">
                             <span class="currency">¥</span>
@@ -129,7 +129,7 @@
                 </div>
             </div>
             <div class="ticket-grid">
-                <div class="ticket-card" v-for="(ticket, index) in filteredTickets" :key="ticket.id">
+                <div class="ticket-card" v-for="ticket in filteredTickets" :key="ticket.id">
                     <div class="ticket-image-wrapper">
                         <img :src="ticket.image" :alt="ticket.name" class="ticket-image">
                         <div class="ticket-discount">
@@ -168,7 +168,7 @@
                     <span class="close-btn" @click="showLevelGuide = false">×</span>
                 </div>
                 <div class="level-guide-list">
-                    <div class="guide-item" v-for="(level, index) in vipLevels" :key="level.level" :class="{'active': userInfo.vipLevel >= level.level}">
+                    <div class="guide-item" v-for="level in vipLevels" :key="level.level" :class="{'active': userInfo.vipLevel >= level.level}">
                         <div class="guide-level-icon">
                             <span>{{level.icon}}</span>
                         </div>
@@ -205,7 +205,7 @@
                     </div>
                 </div>
                 <div class="coupons-list">
-                    <div class="my-coupon-card" v-for="(coupon, index) in displayCoupons" :key="coupon.id" :class="coupon.status">
+                    <div class="my-coupon-card" v-for="coupon in displayCoupons" :key="coupon.id" :class="coupon.status">
                         <div class="my-coupon-left">
                             <div class="my-coupon-value">
                                 <span class="my-currency">¥</span>
@@ -489,6 +489,32 @@ export default {
                     break;
                 default:
                     this.showToastMessage('功能开发中');
+            }
+        },
+        buyVipMovieTicket(ticket) {
+            this.showToastMessage(`正在为您预订《${ticket.name}》的会员价电影票...`);
+        },
+        buyMerchandise(item) {
+            if (item.stock > 0) {
+                this.showToastMessage(`正在为您添加《${item.name}》到购物车...`);
+            } else {
+                this.showToastMessage('该商品已售罄');
+            }
+        },
+        claimBirthdayMovieTickets() {
+            if (!this.birthdayGifts.movieTickets.isClaimed) {
+                this.birthdayGifts.movieTickets.isClaimed = true;
+                this.showToastMessage('恭喜！您已成功领取2张免费电影票！');
+            } else {
+                this.showToastMessage('您已领取过免费电影票了');
+            }
+        },
+        claimSnackPackage() {
+            if (!this.birthdayGifts.snackPackage.isClaimed) {
+                this.birthdayGifts.snackPackage.isClaimed = true;
+                this.showToastMessage('恭喜！您已成功领取88.88元零食套餐兑换券！');
+            } else {
+                this.showToastMessage('您已领取过零食套餐了');
             }
         },
         useCoupon(coupon) {
@@ -1054,8 +1080,11 @@ export default {
     margin-bottom: 4px;
     line-height: 1.3;
     display: -webkit-box;
+    display: box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
+    box-orient: vertical;
     overflow: hidden;
 }
 
@@ -1575,8 +1604,11 @@ export default {
     margin-bottom: 4px;
     line-height: 1.3;
     display: -webkit-box;
+    display: box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
+    box-orient: vertical;
     overflow: hidden;
 }
 
