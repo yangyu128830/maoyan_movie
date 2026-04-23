@@ -230,194 +230,6 @@
             </div>
         </div>
 
-        <div class="modal-overlay" v-if="showBuyBenefit" @click="showBuyBenefit = false">
-            <div class="modal-content buy-benefit-modal" @click.stop>
-                <div class="modal-header">
-                    <h3>购票优惠</h3>
-                    <span class="close-btn" @click="showBuyBenefit = false">×</span>
-                </div>
-                <div class="benefit-tabs">
-                    <div class="benefit-tab-item" :class="{'active': buyBenefitTab === 'movie'}" @click="buyBenefitTab = 'movie'">
-                        <span>🎬 会员价购票</span>
-                    </div>
-                    <div class="benefit-tab-item" :class="{'active': buyBenefitTab === 'merchandise'}" @click="buyBenefitTab = 'merchandise'">
-                        <span>🎁 低价周边</span>
-                    </div>
-                </div>
-                
-                <div class="benefit-content" v-if="buyBenefitTab === 'movie'">
-                    <div class="benefit-intro">
-                        <h4>会员专属优惠</h4>
-                        <p>所有会员均可享受购票专属折扣，比普通用户更便宜！</p>
-                    </div>
-                    <div class="movie-list">
-                        <div class="movie-card" v-for="ticket in vipMovieTickets" :key="ticket.id">
-                            <div class="movie-image-wrapper">
-                                <img :src="ticket.image" :alt="ticket.name" class="movie-image">
-                                <div class="movie-discount">
-                                    <span class="discount-badge">{{getDiscountText(ticket.discount)}}</span>
-                                </div>
-                            </div>
-                            <div class="movie-info">
-                                <h4 class="movie-name">{{ticket.name}}</h4>
-                                <p class="movie-category">{{ticket.category}}</p>
-                                <p class="movie-date">{{ticket.date}}</p>
-                                <p class="movie-venue">{{ticket.venue}}</p>
-                                <div class="movie-price">
-                                    <span class="original-price">¥{{ticket.originalPrice}}</span>
-                                    <span class="vip-price">¥<span class="price-number">{{ticket.vipPrice}}</span></span>
-                                </div>
-                                <button class="buy-movie-btn" @click="buyVipMovieTicket(ticket)">
-                                    立即购票
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="benefit-content" v-else>
-                    <div class="benefit-intro">
-                        <h4>低价购买周边</h4>
-                        <p>会员专享价购买正版电影周边，品质保证，价格优惠！</p>
-                    </div>
-                    <div class="merchandise-list">
-                        <div class="merchandise-card" v-for="item in movieMerchandise" :key="item.id">
-                            <div class="merchandise-image-wrapper">
-                                <img :src="item.image" :alt="item.name" class="merchandise-image">
-                                <div class="merchandise-discount">
-                                    <span class="discount-badge">{{getDiscountText(item.discount)}}</span>
-                                </div>
-                            </div>
-                            <div class="merchandise-info">
-                                <h4 class="merchandise-name">{{item.name}}</h4>
-                                <p class="merchandise-category">{{item.category}}</p>
-                                <div class="merchandise-price">
-                                    <span class="original-price">¥{{item.originalPrice}}</span>
-                                    <span class="vip-price">¥<span class="price-number">{{item.vipPrice}}</span></span>
-                                </div>
-                                <div class="merchandise-stock">
-                                    <span :class="{'out': item.stock === 0}">库存: {{item.stock}}</span>
-                                </div>
-                                <button 
-                                    class="buy-merchandise-btn" 
-                                    :class="{'disabled': item.stock === 0}"
-                                    :disabled="item.stock === 0"
-                                    @click="buyMerchandise(item)"
-                                >
-                                    <span v-if="item.stock > 0">立即购买</span>
-                                    <span v-else>已售罄</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="modal-overlay" v-if="showBirthdayBenefit" @click="showBirthdayBenefit = false">
-            <div class="modal-content birthday-benefit-modal" @click.stop>
-                <div class="modal-header">
-                    <h3>生日礼包</h3>
-                    <span class="close-btn" @click="showBirthdayBenefit = false">×</span>
-                </div>
-                <div class="benefit-tabs">
-                    <div class="benefit-tab-item" :class="{'active': birthdayTab === 'gifts'}" @click="birthdayTab = 'gifts'">
-                        <span>🎁 生日福利</span>
-                    </div>
-                    <div class="benefit-tab-item" :class="{'active': birthdayTab === 'cinemas'}" @click="birthdayTab = 'cinemas'">
-                        <span>📍 支持影院</span>
-                    </div>
-                </div>
-                
-                <div class="benefit-content" v-if="birthdayTab === 'gifts'">
-                    <div class="benefit-intro">
-                        <h4>生日专属福利</h4>
-                        <p>在您生日当天，可享受以下专属福利：</p>
-                    </div>
-                    
-                    <div class="birthday-gift-card">
-                        <div class="gift-icon">🎬</div>
-                        <div class="gift-info">
-                            <h4>免费电影票 × {{birthdayGifts.movieTickets.count}}</h4>
-                            <p class="gift-desc">{{birthdayGifts.movieTickets.description}}</p>
-                            <p class="gift-validity">有效期：{{birthdayGifts.movieTickets.validity}}</p>
-                        </div>
-                        <button 
-                            class="claim-gift-btn" 
-                            :class="{'claimed': birthdayGifts.movieTickets.isClaimed}"
-                            :disabled="birthdayGifts.movieTickets.isClaimed"
-                            @click="claimBirthdayMovieTickets"
-                        >
-                            <span v-if="!birthdayGifts.movieTickets.isClaimed">立即领取</span>
-                            <span v-else>已领取</span>
-                        </button>
-                    </div>
-                    
-                    <div class="birthday-gift-card">
-                        <div class="gift-icon">🍿</div>
-                        <div class="gift-info">
-                            <h4>{{birthdayGifts.snackPackage.name}}</h4>
-                            <p class="gift-desc">{{birthdayGifts.snackPackage.description}}</p>
-                            <p class="gift-includes">{{birthdayGifts.snackPackage.includes}}</p>
-                        </div>
-                        <button 
-                            class="claim-gift-btn" 
-                            :class="{'claimed': birthdayGifts.snackPackage.isClaimed}"
-                            :disabled="birthdayGifts.snackPackage.isClaimed"
-                            @click="claimSnackPackage"
-                        >
-                            <span v-if="!birthdayGifts.snackPackage.isClaimed">立即领取</span>
-                            <span v-else>已领取</span>
-                        </button>
-                    </div>
-                    
-                    <div class="birthday-tip">
-                        <p>💡 提示：生日福利仅限生日当天领取，请在支持的影院柜台出示兑换码领取零食套餐。</p>
-                    </div>
-                </div>
-                
-                <div class="benefit-content" v-else>
-                    <div class="benefit-intro">
-                        <h4>支持生日特权的影院</h4>
-                        <p>以下影院支持生日特权兑换，请选择您所在城市查看：</p>
-                    </div>
-                    
-                    <div class="cinema-filter">
-                        <div 
-                            class="filter-city-item" 
-                            v-for="city in uniqueCities" 
-                            :key="city"
-                            :class="{'active': cinemaFilter === city}"
-                            @click="cinemaFilter = city"
-                        >
-                            <span v-if="city === 'all'">全部城市</span>
-                            <span v-else>{{city}}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="cinema-list">
-                        <div class="cinema-card" v-for="cinema in filteredCinemas" :key="cinema.id">
-                            <div class="cinema-icon">🎥</div>
-                            <div class="cinema-info">
-                                <h4 class="cinema-name">{{cinema.name}}</h4>
-                                <p class="cinema-city">{{cinema.city}}</p>
-                                <p class="cinema-address">{{cinema.address}}</p>
-                                <p class="cinema-phone">📞 {{cinema.phone}}</p>
-                                <p class="cinema-hours">⏰ {{cinema.businessHours}}</p>
-                            </div>
-                            <div class="cinema-status">
-                                <span class="supported-tag">支持</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="no-cinemas" v-if="filteredCinemas.length === 0">
-                        <p>该城市暂未开通生日特权，请选择其他城市。</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
         <div class="toast" :class="{'show': showToast}">
             <span>{{toastMessage}}</span>
         </div>
@@ -440,10 +252,6 @@ export default {
             couponsTab: 'available',
             showToast: false,
             toastMessage: '',
-            showBuyBenefit: false,
-            showBirthdayBenefit: false,
-            buyBenefitTab: 'movie',
-            birthdayTab: 'gifts',
             userInfo: {
                 nickname: '电影爱好者',
                 avatar: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=cute%20cat%20avatar%20cartoon%20style%20round%20icon&image_size=square_hd',
@@ -569,198 +377,7 @@ export default {
                     minLevel: 3,
                     image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=chinese%20comedy%20stage%20play%20funny%20actors%20colorful%20stage&image_size=square_hd'
                 }
-            ],
-            vipMovieTickets: [
-                {
-                    id: 101,
-                    name: '流浪地球3',
-                    category: '科幻',
-                    date: '2026-04-25 19:30',
-                    venue: '万达影城（朝阳店）',
-                    originalPrice: 68,
-                    vipPrice: 58,
-                    discount: 0.85,
-                    minLevel: 1,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=sci-fi%20movie%20poster%20space%20earth%20futuristic&image_size=square_hd'
-                },
-                {
-                    id: 102,
-                    name: '速度与激情11',
-                    category: '动作',
-                    date: '2026-04-26 20:00',
-                    venue: 'CGV影城（国贸店）',
-                    originalPrice: 75,
-                    vipPrice: 62,
-                    discount: 0.83,
-                    minLevel: 1,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=action%20movie%20poster%20fast%20cars%20racing%20dynamic&image_size=square_hd'
-                },
-                {
-                    id: 103,
-                    name: '疯狂动物城2',
-                    category: '动画',
-                    date: '2026-04-27 14:30',
-                    venue: '金逸影城（中关村店）',
-                    originalPrice: 65,
-                    vipPrice: 55,
-                    discount: 0.85,
-                    minLevel: 1,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=animated%20movie%20poster%20cute%20animals%20city%20colorful&image_size=square_hd'
-                },
-                {
-                    id: 104,
-                    name: '复仇者联盟5',
-                    category: '科幻',
-                    date: '2026-04-28 19:00',
-                    venue: '百老汇影城（三里屯店）',
-                    originalPrice: 85,
-                    vipPrice: 72,
-                    discount: 0.85,
-                    minLevel: 1,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=superhero%20movie%20poster%20epic%20battle%20heroes&image_size=square_hd'
-                }
-            ],
-            movieMerchandise: [
-                {
-                    id: 201,
-                    name: '漫威英雄手办套装',
-                    category: '手办',
-                    originalPrice: 299,
-                    vipPrice: 199,
-                    discount: 0.67,
-                    stock: 50,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=marvel%20action%20figures%20collection%20superhero%20toys&image_size=square_hd'
-                },
-                {
-                    id: 202,
-                    name: '电影主题T恤（限量版）',
-                    category: '服装',
-                    originalPrice: 129,
-                    vipPrice: 89,
-                    discount: 0.69,
-                    stock: 100,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=movie%20theme%20tshirt%20black%20cinema%20design&image_size=square_hd'
-                },
-                {
-                    id: 203,
-                    name: '星球大战光剑（收藏版）',
-                    category: '周边',
-                    originalPrice: 599,
-                    vipPrice: 399,
-                    discount: 0.67,
-                    stock: 20,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=star%20wars%20lightsaber%20blue%20glowing%20collectible&image_size=square_hd'
-                },
-                {
-                    id: 204,
-                    name: '哈利波特魔法棒',
-                    category: '周边',
-                    originalPrice: 199,
-                    vipPrice: 139,
-                    discount: 0.7,
-                    stock: 80,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=harry%20potter%20magic%20wand%20wooden%20mystical&image_size=square_hd'
-                },
-                {
-                    id: 205,
-                    name: '电影海报收藏册',
-                    category: '收藏',
-                    originalPrice: 89,
-                    vipPrice: 59,
-                    discount: 0.66,
-                    stock: 200,
-                    image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=movie%20poster%20collection%20album%20vintage%20cinema&image_size=square_hd'
-                }
-            ],
-            birthdayGifts: {
-                movieTickets: {
-                    count: 2,
-                    description: '生日当天可免费领取两张普通厅电影票',
-                    validity: '生日当天有效',
-                    isClaimed: false
-                },
-                snackPackage: {
-                    name: '88.88元零食套餐',
-                    description: '可到当地平台合作电影院柜台领取',
-                    includes: '包含：大桶爆米花+两杯可乐+一份小吃',
-                    isClaimed: false
-                }
-            },
-            supportedCinemas: [
-                {
-                    id: 1,
-                    name: '万达影城（朝阳店）',
-                    city: '北京',
-                    address: '北京市朝阳区建国路88号万达广场',
-                    phone: '010-88888888',
-                    businessHours: '10:00 - 23:00',
-                    supported: true
-                },
-                {
-                    id: 2,
-                    name: 'CGV影城（国贸店）',
-                    city: '北京',
-                    address: '北京市朝阳区建国门外大街1号国贸商城',
-                    phone: '010-66666666',
-                    businessHours: '10:00 - 22:30',
-                    supported: true
-                },
-                {
-                    id: 3,
-                    name: '金逸影城（中关村店）',
-                    city: '北京',
-                    address: '北京市海淀区中关村大街19号新中关购物中心',
-                    phone: '010-55555555',
-                    businessHours: '09:30 - 22:30',
-                    supported: true
-                },
-                {
-                    id: 4,
-                    name: '百老汇影城（三里屯店）',
-                    city: '北京',
-                    address: '北京市朝阳区三里屯太古里北区',
-                    phone: '010-77777777',
-                    businessHours: '10:00 - 23:00',
-                    supported: true
-                },
-                {
-                    id: 5,
-                    name: '万达影城（南京东路店）',
-                    city: '上海',
-                    address: '上海市黄浦区南京东路300号恒基名人购物中心',
-                    phone: '021-88888888',
-                    businessHours: '10:00 - 23:00',
-                    supported: true
-                },
-                {
-                    id: 6,
-                    name: 'CGV影城（五角场店）',
-                    city: '上海',
-                    address: '上海市杨浦区邯郸路600号万达广场',
-                    phone: '021-66666666',
-                    businessHours: '10:00 - 22:30',
-                    supported: true
-                },
-                {
-                    id: 7,
-                    name: '万达影城（天河店）',
-                    city: '广州',
-                    address: '广州市天河区天河路385号太古汇',
-                    phone: '020-88888888',
-                    businessHours: '10:00 - 23:00',
-                    supported: true
-                },
-                {
-                    id: 8,
-                    name: '金逸影城（北京路店）',
-                    city: '广州',
-                    address: '广州市越秀区北京路312号青年文化宫',
-                    phone: '020-55555555',
-                    businessHours: '10:00 - 22:30',
-                    supported: true
-                }
-            ],
-            cinemaFilter: 'all'
+            ]
         };
     },
     computed: {
@@ -803,16 +420,6 @@ export default {
                 case 'expired': return this.expiredCoupons;
                 default: return this.availableCoupons;
             }
-        },
-        filteredCinemas() {
-            if (this.cinemaFilter === 'all') {
-                return this.supportedCinemas;
-            }
-            return this.supportedCinemas.filter(c => c.city === this.cinemaFilter);
-        },
-        uniqueCities() {
-            const cities = this.supportedCinemas.map(c => c.city);
-            return ['all', ...new Set(cities)];
         }
     },
     methods: {
@@ -854,10 +461,16 @@ export default {
         handleBenefitAction(benefit) {
             switch (benefit.actionType) {
                 case 'buy':
-                    this.showBuyBenefit = true;
+                    this.$router.push({
+                        path: '/buy-benefit',
+                        name: 'buy-benefit'
+                    });
                     break;
                 case 'birthday':
-                    this.showBirthdayBenefit = true;
+                    this.$router.push({
+                        path: '/birthday-benefit',
+                        name: 'birthday-benefit'
+                    });
                     break;
                 case 'premiere':
                     this.showToastMessage('暂无首映场次，敬请期待');
@@ -876,32 +489,6 @@ export default {
                     break;
                 default:
                     this.showToastMessage('功能开发中');
-            }
-        },
-        buyVipMovieTicket(ticket) {
-            this.showToastMessage(`正在为您预订《${ticket.name}》的会员价电影票...`);
-        },
-        buyMerchandise(item) {
-            if (item.stock > 0) {
-                this.showToastMessage(`正在为您添加《${item.name}》到购物车...`);
-            } else {
-                this.showToastMessage('该商品已售罄');
-            }
-        },
-        claimBirthdayMovieTickets() {
-            if (!this.birthdayGifts.movieTickets.isClaimed) {
-                this.birthdayGifts.movieTickets.isClaimed = true;
-                this.showToastMessage('恭喜！您已成功领取2张免费电影票！');
-            } else {
-                this.showToastMessage('您已领取过免费电影票了');
-            }
-        },
-        claimSnackPackage() {
-            if (!this.birthdayGifts.snackPackage.isClaimed) {
-                this.birthdayGifts.snackPackage.isClaimed = true;
-                this.showToastMessage('恭喜！您已成功领取88.88元零食套餐兑换券！');
-            } else {
-                this.showToastMessage('您已领取过零食套餐了');
             }
         },
         useCoupon(coupon) {
