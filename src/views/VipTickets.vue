@@ -179,7 +179,14 @@
                 <div class="section-header">
                     <div class="header-left">
                         <h3>⏰ 提前抢购专区</h3>
-                        <p class="section-desc">会员专属提前购票特权，快人一步</p>
+                        <div class="user-privilege" v-if="userLevel.advanceDays > 0">
+                            <span class="privilege-icon">✨</span>
+                            <span class="privilege-text">您的专属特权：<strong>提前 {{ userLevel.advanceDays }} 天抢购</strong></span>
+                        </div>
+                        <div class="user-privilege no-privilege" v-else>
+                            <span class="privilege-icon">🔒</span>
+                            <span class="privilege-text">升级至白银会员解锁提前抢购特权</span>
+                        </div>
                     </div>
                     <div class="header-right">
                         <div class="category-filter">
@@ -188,39 +195,6 @@
                                 <option value="">全部</option>
                                 <option v-for="cat in categories" :key="cat.id" :value="cat.code">{{ cat.name }}</option>
                             </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="advance-info-card">
-                    <div class="info-header">
-                        <span class="info-icon">💡</span>
-                        <span class="info-title">提前抢购说明</span>
-                    </div>
-                    <div class="info-content">
-                        <p>• 白银及以上会员可享受提前购票特权</p>
-                        <p>• 不同等级会员提前购票天数不同</p>
-                        <div class="level-table">
-                            <div class="table-row">
-                                <span class="level-cell">🥉 青铜</span>
-                                <span class="days-cell">无提前购</span>
-                            </div>
-                            <div class="table-row">
-                                <span class="level-cell">🥈 白银</span>
-                                <span class="days-cell">提前1天</span>
-                            </div>
-                            <div class="table-row">
-                                <span class="level-cell">🥇 黄金</span>
-                                <span class="days-cell">提前2天</span>
-                            </div>
-                            <div class="table-row">
-                                <span class="level-cell">💎 铂金</span>
-                                <span class="days-cell">提前3天</span>
-                            </div>
-                            <div class="table-row">
-                                <span class="level-cell">👑 钻石</span>
-                                <span class="days-cell">提前5天</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -801,6 +775,40 @@ export default {
     cursor: pointer;
 }
 
+.user-privilege {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #fff8f5 0%, #fff9e6 100%);
+    border-radius: 6px;
+    border: 1px solid #ffcc80;
+
+    &.no-privilege {
+        background: #f5f5f5;
+        border-color: #e0e0e0;
+    }
+}
+
+.privilege-icon {
+    font-size: 16px;
+    margin-right: 6px;
+}
+
+.privilege-text {
+    font-size: 13px;
+    color: #666;
+
+    strong {
+        color: #E54847;
+        font-weight: bold;
+    }
+
+    .no-privilege & {
+        color: #999;
+    }
+}
+
 .privilege-tips {
     display: flex;
     justify-content: space-around;
@@ -1109,67 +1117,6 @@ export default {
     font-size: 11px;
     color: #999;
     margin-top: 4px;
-}
-
-.advance-info-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-
-.info-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.info-icon {
-    font-size: 18px;
-    margin-right: 8px;
-}
-
-.info-title {
-    font-size: 15px;
-    font-weight: bold;
-    color: #333;
-}
-
-.info-content {
-    p {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 8px;
-    }
-}
-
-.level-table {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.table-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: #f5f5f5;
-    border-radius: 6px;
-}
-
-.level-cell {
-    font-size: 13px;
-    color: #333;
-    font-weight: 500;
-}
-
-.days-cell {
-    font-size: 12px;
-    color: #E54847;
-    font-weight: 500;
 }
 
 .empty-state {
