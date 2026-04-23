@@ -1,15 +1,5 @@
 <template>
     <div class="birthday-benefit-page">
-        <div class="page-header">
-            <div class="back-btn" @click="goBack">
-                <span>← 返回</span>
-            </div>
-            <h1 class="page-title">生日礼包</h1>
-            <div class="user-info">
-                <span class="user-level">{{userLevel.shortName}}会员</span>
-            </div>
-        </div>
-
         <div class="benefit-banner">
             <div class="banner-content">
                 <div class="banner-icon">🎁</div>
@@ -389,9 +379,6 @@ export default {
         }
     },
     methods: {
-        goBack() {
-            this.$router.go(-1);
-        },
         claimBirthdayMovieTickets() {
             if (!this.birthdayGifts.movieTickets.isClaimed) {
                 this.birthdayGifts.movieTickets.isClaimed = true;
@@ -427,45 +414,6 @@ export default {
     background-color: #f5f5f5;
     min-height: 100vh;
     padding-bottom: 20px;
-}
-
-.page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 20px;
-    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 50%, #ffd700 100%);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.back-btn {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-
-    span {
-        color: #fff;
-        font-size: 14px;
-        font-weight: 500;
-    }
-}
-
-.page-title {
-    color: #fff;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.user-info {
-    .user-level {
-        color: #fff;
-        font-size: 12px;
-        padding: 4px 12px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 12px;
-    }
 }
 
 .benefit-banner {
@@ -905,8 +853,11 @@ export default {
     color: #333;
     line-height: 1.3;
     display: -webkit-box;
+    display: box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
+    box-orient: vertical;
     overflow: hidden;
 }
 
