@@ -797,22 +797,25 @@ export default {
 
 .sign-calendar {
     margin-bottom: 20px;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 
     span {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
         color: #333;
     }
 
     .month {
-        font-size: 12px;
+        font-size: 11px;
         color: #999;
         font-weight: normal;
     }
@@ -821,20 +824,20 @@ export default {
 .calendar-week {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .week-day {
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     color: #999;
-    padding: 5px 0;
+    padding: 4px 0;
 }
 
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 4px;
 }
 
 .calendar-day {
@@ -843,8 +846,8 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    font-size: 13px;
+    border-radius: 6px;
+    font-size: 11px;
     color: #333;
     position: relative;
 
@@ -864,8 +867,8 @@ export default {
         color: #fff;
 
         .check-icon {
-            font-size: 10px;
-            margin-top: 2px;
+            font-size: 8px;
+            margin-top: 1px;
         }
     }
 }
@@ -876,10 +879,10 @@ export default {
 }
 
 .rewards-header {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 
     span {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: bold;
         color: #333;
     }
@@ -888,28 +891,29 @@ export default {
 .rewards-list {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .reward-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px 5px;
+    padding: 15px 10px;
     background: #f9f9f9;
-    border-radius: 8px;
+    border-radius: 10px;
     opacity: 0.5;
     transition: all 0.3s ease;
 
     &.achieved {
         opacity: 1;
         background: #fff5f5;
+        border: 1px solid #ffcccc;
     }
 }
 
 .reward-icon {
-    font-size: 24px;
-    margin-bottom: 5px;
+    font-size: 32px;
+    margin-bottom: 8px;
 }
 
 .reward-info {
@@ -918,14 +922,14 @@ export default {
 
 .reward-days {
     display: block;
-    font-size: 11px;
+    font-size: 13px;
     color: #666;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .reward-points-text {
     display: block;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: bold;
     color: #E54847;
 }
