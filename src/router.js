@@ -123,6 +123,16 @@ export default new Router({
       path: '/birthday-benefit', // 生日礼包
       name: 'birthday-benefit',
       component: ()=> import('@/views/BirthdayBenefit.vue')
+    },
+    {
+      path: '/premiere', // 首映抢先看
+      name: 'premiere',
+      component: ()=> import('@/views/Premiere.vue')
+    },
+    {
+      path: '/concert-discount', // 演出票9折
+      name: 'concert-discount',
+      component: ()=> import('@/views/ConcertDiscount.vue')
     }
   ]
 })

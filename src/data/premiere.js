@@ -1,0 +1,293 @@
+const premiereData = {
+  vipLevels: [
+    {
+      level: 1,
+      name: '青铜会员',
+      shortName: '青铜',
+      icon: '🥉',
+      discount: 0.95,
+      advanceDays: 0,
+      color: '#cd7f32'
+    },
+    {
+      level: 2,
+      name: '白银会员',
+      shortName: '白银',
+      icon: '🥈',
+      discount: 0.9,
+      advanceDays: 1,
+      color: '#c0c0c0'
+    },
+    {
+      level: 3,
+      name: '黄金会员',
+      shortName: '黄金',
+      icon: '🥇',
+      discount: 0.85,
+      advanceDays: 2,
+      color: '#ffd700'
+    },
+    {
+      level: 4,
+      name: '铂金会员',
+      shortName: '铂金',
+      icon: '💎',
+      discount: 0.8,
+      advanceDays: 3,
+      color: '#e5e4e2'
+    },
+    {
+      level: 5,
+      name: '钻石会员',
+      shortName: '钻石',
+      icon: '👑',
+      discount: 0.75,
+      advanceDays: 5,
+      color: '#b9f2ff'
+    }
+  ],
+  cities: [
+    { id: 1, name: '北京', code: 'beijing' },
+    { id: 2, name: '上海', code: 'shanghai' },
+    { id: 3, name: '广州', code: 'guangzhou' },
+    { id: 4, name: '深圳', code: 'shenzhen' },
+    { id: 5, name: '杭州', code: 'hangzhou' },
+    { id: 6, name: '成都', code: 'chengdu' },
+    { id: 7, name: '南京', code: 'nanjing' },
+    { id: 8, name: '武汉', code: 'wuhan' }
+  ],
+  types: [
+    { id: 1, name: '电影', code: 'movie' },
+    { id: 2, name: '演唱会', code: 'concert' },
+    { id: 3, name: '话剧', code: 'drama' },
+    { id: 4, name: '音乐剧', code: 'musical' },
+    { id: 5, name: '歌剧', code: 'opera' }
+  ],
+  hotPremieres: [
+    {
+      id: 1,
+      name: '《阿凡达3：水之道》IMAX 3D 首映礼',
+      shortDesc: '詹姆斯·卡梅隆最新科幻巨作，震撼来袭！',
+      type: 'movie',
+      releaseDate: '2026-04-30',
+      releaseStatus: '3天后上映',
+      city: '北京',
+      venue: '北京万达影城CBD店',
+      artist: '萨姆·沃辛顿',
+      advanceDays: 7,
+      minLevel: 2,
+      originalPrice: 158,
+      vipPrice: 128,
+      canBuy: true,
+      saleStartDate: '2026-04-27 10:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=avatar%203%20movie%20poster%20blue%20ocean%20pandora%20fantasy%20cinematic&image_size=square_hd',
+      description: '詹姆斯·卡梅隆执导的科幻史诗巨作，带你重返潘多拉星球，见证水之道的传奇故事。IMAX 3D 首映礼，会员专享提前购票！'
+    },
+    {
+      id: 2,
+      name: '周杰伦「嘉年华」世界巡回演唱会-北京站',
+      shortDesc: '华语乐坛天王，经典曲目全回顾！',
+      type: 'concert',
+      releaseDate: '2026-05-01',
+      releaseStatus: '4天后开唱',
+      city: '北京',
+      venue: '北京工人体育场',
+      artist: '周杰伦',
+      advanceDays: 5,
+      minLevel: 3,
+      originalPrice: 1280,
+      vipPrice: 1088,
+      canBuy: false,
+      saleStartDate: '2026-04-28 12:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=jay%20chou%20concert%20carnival%20theme%20colorful%20stage%20exciting&image_size=square_hd',
+      description: '周杰伦2026嘉年华世界巡回演唱会北京站，精选20年经典曲目，打造视听盛宴！黄金会员及以上专享提前5天购票。'
+    },
+    {
+      id: 3,
+      name: '音乐剧《巴黎圣母院》中文版 全国首演',
+      shortDesc: '经典法语音乐剧震撼来袭，中文版首演！',
+      type: 'musical',
+      releaseDate: '2026-05-05',
+      releaseStatus: '8天后首演',
+      city: '上海',
+      venue: '上海文化广场',
+      artist: '巴黎圣母院剧组',
+      advanceDays: 3,
+      minLevel: 2,
+      originalPrice: 580,
+      vipPrice: 498,
+      canBuy: true,
+      saleStartDate: '2026-05-02 10:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=notre%20dame%20de%20paris%20musical%20chinese%20version%20stage%20dramatic&image_size=square_hd',
+      description: '经典法语音乐剧《巴黎圣母院》中文版全国首演，感受雨果笔下的爱恨情仇，见证音乐剧的魅力！'
+    }
+  ],
+  comingWeekItems: [
+    {
+      id: 101,
+      name: '《阿凡达3：水之道》IMAX 3D 首映',
+      type: 'movie',
+      releaseDate: '2026-04-30',
+      city: '北京',
+      venue: '北京万达影城CBD店',
+      artist: '萨姆·沃辛顿',
+      minLevel: 2,
+      originalPrice: 158,
+      vipPrice: 128,
+      canBuy: true,
+      saleStartDate: '2026-04-27 10:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=avatar%203%20movie%20poster%20blue%20ocean%20pandora%20fantasy%20cinematic&image_size=square_hd',
+      description: '詹姆斯·卡梅隆执导的科幻史诗巨作，IMAX 3D 震撼呈现。'
+    },
+    {
+      id: 102,
+      name: '《沙丘2》4K激光厅 超前点映',
+      type: 'movie',
+      releaseDate: '2026-05-02',
+      city: '上海',
+      venue: '上海百丽宫影城',
+      artist: '提莫西·查拉梅',
+      minLevel: 3,
+      originalPrice: 128,
+      vipPrice: 98,
+      canBuy: true,
+      saleStartDate: '2026-04-29 10:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=dune%20part%20two%20movie%20poster%20desert%20sandworm%20epic%20cinematic&image_size=square_hd',
+      description: '丹尼斯·维伦纽瓦执导的科幻史诗，4K激光厅超前点映，会员专享。'
+    },
+    {
+      id: 103,
+      name: '周杰伦「嘉年华」演唱会-北京站',
+      type: 'concert',
+      releaseDate: '2026-05-01',
+      city: '北京',
+      venue: '北京工人体育场',
+      artist: '周杰伦',
+      minLevel: 3,
+      originalPrice: 1280,
+      vipPrice: 1088,
+      canBuy: false,
+      saleStartDate: '2026-04-28 12:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=jay%20chou%20concert%20carnival%20theme%20colorful%20stage%20exciting&image_size=square_hd',
+      description: '周杰伦2026嘉年华世界巡回演唱会北京站，精选20年经典曲目。'
+    },
+    {
+      id: 104,
+      name: '林俊杰「圣所」演唱会-上海站',
+      type: 'concert',
+      releaseDate: '2026-05-03',
+      city: '上海',
+      venue: '上海梅赛德斯奔驰文化中心',
+      artist: '林俊杰',
+      minLevel: 4,
+      originalPrice: 980,
+      vipPrice: 784,
+      canBuy: true,
+      saleStartDate: '2026-04-30 10:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=jj%20lin%20sanctuary%20concert%20purple%20stage%20amazing%20performance&image_size=square_hd',
+      description: 'JJ出道20周年纪念演唱会，精选20年经典曲目，打造视听盛宴。'
+    },
+    {
+      id: 105,
+      name: '开心麻花《乌龙山伯爵》-广州站',
+      type: 'drama',
+      releaseDate: '2026-05-04',
+      city: '广州',
+      venue: '广州友谊剧院',
+      artist: '开心麻花',
+      minLevel: 1,
+      originalPrice: 380,
+      vipPrice: 323,
+      canBuy: true,
+      saleStartDate: '2026-05-01 10:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=happy%20mahua%20comedy%20stage%20play%20funny%20actors%20colorful&image_size=square_hd',
+      description: '开心麻花经典爆笑舞台剧，让你笑到停不下来！'
+    },
+    {
+      id: 106,
+      name: '《速度与激情11》零点首映场',
+      type: 'movie',
+      releaseDate: '2026-05-05',
+      city: '深圳',
+      venue: '深圳博纳国际影城',
+      artist: '范·迪塞尔',
+      minLevel: 2,
+      originalPrice: 88,
+      vipPrice: 68,
+      canBuy: true,
+      saleStartDate: '2026-05-02 10:00',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=fast%20and%20furious%2011%20movie%20poster%20racing%20cars%20action%20exciting&image_size=square_hd',
+      description: '速度与激情系列最终章，零点首映场，会员专享优惠。'
+    }
+  ],
+  advancePreviewItems: [
+    {
+      id: 201,
+      name: '《复仇者联盟5：秘密战争》全球首映',
+      type: 'movie',
+      releaseDate: '2026-06-15',
+      city: '北京',
+      venue: '待定',
+      artist: '漫威群星',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=avengers%205%20secret%20wars%20marvel%20movie%20poster%20epic%20superheroes&image_size=square_hd',
+      description: '漫威宇宙史诗级巨作，复仇者联盟全员集结，揭开秘密战争的序幕。'
+    },
+    {
+      id: 202,
+      name: '陈奕迅 Fear and Dreams 巡回演唱会',
+      type: 'concert',
+      releaseDate: '2026-07-01',
+      city: '上海',
+      venue: '上海虹口足球场',
+      artist: '陈奕迅',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=eason%20chan%20fear%20and%20dreams%20concert%20artistic%20stage%20emotional&image_size=square_hd',
+      description: '歌神陈奕迅全新巡演，用歌声讲述人生故事，感动每一个灵魂。'
+    },
+    {
+      id: 203,
+      name: '音乐剧《汉密尔顿》中文版 亚洲首演',
+      type: 'musical',
+      releaseDate: '2026-08-10',
+      city: '上海',
+      venue: '上海文化广场',
+      artist: '汉密尔顿剧组',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hamilton%20musical%20chinese%20version%20broadway%20style%20stage%20historical&image_size=square_hd',
+      description: '百老汇现象级音乐剧《汉密尔顿》中文版亚洲首演，不容错过！'
+    },
+    {
+      id: 204,
+      name: '《阿凡达4》概念预告发布会',
+      type: 'movie',
+      releaseDate: '2026-09-01',
+      city: '北京',
+      venue: '北京国际会议中心',
+      artist: '詹姆斯·卡梅隆',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=avatar%204%20concept%20art%20pandora%20new%20world%20futuristic%20cinematic&image_size=square_hd',
+      description: '詹姆斯·卡梅隆亲自出席，揭秘《阿凡达4》最新概念设计和拍摄进展。'
+    },
+    {
+      id: 205,
+      name: '华晨宇 火星演唱会 2026',
+      type: 'concert',
+      releaseDate: '2026-10-15',
+      city: '杭州',
+      venue: '杭州奥体中心体育场',
+      artist: '华晨宇',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=hua%20chenyu%20mars%20concert%20red%20theme%20passionate%20stage%20unique&image_size=square_hd',
+      description: '音乐鬼才华晨宇火星演唱会，带你进入他独一无二的音乐世界。'
+    },
+    {
+      id: 206,
+      name: '话剧《雷雨》北京人艺经典复排',
+      type: 'drama',
+      releaseDate: '2026-11-01',
+      city: '北京',
+      venue: '北京人艺首都剧场',
+      artist: '北京人民艺术剧院',
+      image: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=thunderstorm%20drama%20classical%20chinese%20theater%20dramatic%20stage&image_size=square_hd',
+      description: '曹禺经典话剧《雷雨》，北京人艺经典复排，感受话剧艺术的魅力。'
+    }
+  ]
+};
+
+export default premiereData;
