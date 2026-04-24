@@ -433,7 +433,9 @@ export default {
             this.searchKeyword = '';
         },
         scrollToAll() {
-            this.$refs.contentSection?.scrollIntoView({ behavior: 'smooth' });
+            if (this.$refs.contentSection) {
+                this.$refs.contentSection.scrollIntoView({ behavior: 'smooth' });
+            }
         },
         showHotDetail(item) {
             this.showToastMessage(`正在查看「${item.name}」详情...`);
