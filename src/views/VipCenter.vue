@@ -473,10 +473,16 @@ export default {
                     });
                     break;
                 case 'premiere':
-                    this.showToastMessage('暂无首映场次，敬请期待');
+                    this.$router.push({
+                        path: '/premiere',
+                        name: 'premiere'
+                    });
                     break;
                 case 'concert':
-                    this.activeTab = 'tickets';
+                    this.$router.push({
+                        path: '/concert-discount',
+                        name: 'concert-discount'
+                    });
                     break;
                 case 'seats':
                     this.showToastMessage('购票时可优先选择黄金座位');
