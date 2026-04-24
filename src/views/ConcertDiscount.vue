@@ -1,17 +1,11 @@
 <template>
     <div class="concert-discount-page">
-        <div class="page-header">
-            <div class="vip-banner">
-                <div class="banner-content">
-                    <div class="banner-icon">🎵</div>
-                    <div class="banner-info">
-                        <h2>演出票9折</h2>
-                        <p>会员专享 · 9折优惠 · 省钱省心</p>
-                    </div>
-                </div>
-                <div class="user-level-badge">
-                    <span class="level-icon">{{userLevel.icon}}</span>
-                    <span class="level-text">{{userLevel.shortName}}会员</span>
+        <div class="benefit-banner">
+            <div class="banner-content">
+                <div class="banner-icon">🎵</div>
+                <div class="banner-text">
+                    <h2>演出票9折</h2>
+                    <p>会员专享 · 9折优惠 · 省钱省心</p>
                 </div>
             </div>
         </div>
@@ -21,7 +15,6 @@
                 <div class="coupon-banner-content">
                     <div class="coupon-banner-left">
                         <div class="coupon-value">
-                            <span class="currency">¥</span>
                             <span class="value">9折</span>
                         </div>
                         <div class="coupon-condition">演出票通用</div>
@@ -152,53 +145,33 @@
                     >价格从高到低</button>
                 </div>
             </div>
-            <div class="filter-row" v-if="selectedCity !== 'all' || selectedCategory !== 'all' || discountFilter !== 'all' || searchKeyword">
-                <div class="filter-info">
-                    <span v-if="selectedCity !== 'all'" class="filter-tag">📍 {{ selectedCity }}</span>
-                    <span v-if="selectedCategory !== 'all'" class="filter-tag">🎭 {{ getCategoryName(selectedCategory) }}</span>
-                    <span v-if="discountFilter === 'nine'" class="filter-tag">🎫 9折优惠</span>
-                    <span v-if="discountFilter === 'more'" class="filter-tag">🎫 9折以下</span>
-                    <span v-if="searchKeyword" class="filter-tag">🔍 {{ searchKeyword }}</span>
-                    <button class="clear-btn" @click="clearFilters">清除筛选</button>
-                </div>
-            </div>
         </div>
 
         <div class="content-section">
-            <div class="section-header">
-                <div class="header-left">
-                    <h3>🎫 可使用9折优惠的演出</h3>
-                    <p class="section-desc">共 {{ filteredTickets.length }} 场演出，会员专享9折优惠</p>
-                </div>
+            <div class="section-intro">
+                <h3>🎫 可使用9折优惠的演出</h3>
+                <p>共 {{ filteredTickets.length }} 场演出，会员专享9折优惠</p>
             </div>
 
-            <div class="ticket-list" v-if="filteredTickets.length > 0">
+            <div class="movie-list" v-if="filteredTickets.length > 0">
                 <div 
-                    class="ticket-card" 
+                    class="movie-card" 
                     v-for="ticket in filteredTickets" 
                     :key="ticket.id"
                     @click="goToDetail(ticket)"
                 >
-                    <div class="ticket-image-wrapper">
-                        <img :src="ticket.image" :alt="ticket.name" class="ticket-image">
-                        <div class="ticket-tags">
-                            <span class="tag discount-tag" :class="'discount-' + Math.round(ticket.discount * 100)">
-                                {{ getDiscountTag(ticket.discount) }}
-                            </span>
-                            <span class="tag level-tag" v-if="ticket.minLevel > userInfo.vipLevel">
-                                🔒 {{ getLevelInfo(ticket.minLevel).shortName }}+
-                            </span>
+                    <div class="movie-image-wrapper">
+                        <img :src="ticket.image" :alt="ticket.name" class="movie-image">
+                        <div class="movie-discount">
+                            <span class="discount-badge">{{ getDiscountTag(ticket.discount) }}</span>
                         </div>
-                        <div class="ticket-discount-badge">
-                            <div class="discount-badge-content">
-                                <span class="badge-label">会员价</span>
-                                <span class="badge-value">{{ getDiscountPercent(ticket.discount) }}折</span>
-                            </div>
+                        <div class="ticket-level" v-if="ticket.minLevel > userInfo.vipLevel">
+                            <span class="level-lock">🔒 {{ getLevelInfo(ticket.minLevel).shortName }}+</span>
                         </div>
                     </div>
-                    <div class="ticket-content">
-                        <h4 class="ticket-title">{{ ticket.name }}</h4>
-                        <div class="ticket-meta">
+                    <div class="movie-content">
+                        <h4 class="movie-name">{{ ticket.name }}</h4>
+                        <div class="movie-meta">
                             <span class="meta-item" v-if="ticket.artist">🎤 {{ ticket.artist }}</span>
                             <span class="meta-item">📍 {{ ticket.city }} · {{ ticket.venue }}</span>
                             <span class="meta-item">📅 {{ ticket.date }}</span>
@@ -209,7 +182,7 @@
                                 余票：{{ ticket.totalTickets - ticket.soldTickets }}张
                             </span>
                         </div>
-                        <div class="ticket-price-section">
+                        <div class="movie-price-section">
                             <div class="price-info">
                                 <span class="original-price">¥{{ ticket.originalPrice }}</span>
                                 <span class="vip-price">
@@ -220,19 +193,17 @@
                                     省¥{{ ticket.originalPrice - getVipPrice(ticket) }}
                                 </span>
                             </div>
-                            <div class="ticket-action">
-                                <button 
-                                    class="buy-btn" 
-                                    :class="{ 'locked': ticket.minLevel > userInfo.vipLevel }"
-                                    :disabled="ticket.minLevel > userInfo.vipLevel"
-                                    @click.stop="handleBuyTicket(ticket)"
-                                >
-                                    <span v-if="ticket.minLevel <= userInfo.vipLevel">
-                                        {{ ticket.soldTickets >= ticket.totalTickets ? '已售罄' : '立即购票' }}
-                                    </span>
-                                    <span v-else>升级解锁</span>
-                                </button>
-                            </div>
+                            <button 
+                                class="buy-btn" 
+                                :class="{ 'locked': ticket.minLevel > userInfo.vipLevel }"
+                                :disabled="ticket.minLevel > userInfo.vipLevel"
+                                @click.stop="handleBuyTicket(ticket)"
+                            >
+                                <span v-if="ticket.minLevel <= userInfo.vipLevel">
+                                    {{ ticket.soldTickets >= ticket.totalTickets ? '已售罄' : '立即购票' }}
+                                </span>
+                                <span v-else>升级解锁</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -247,7 +218,7 @@
         </div>
 
         <div class="usage-guide-section">
-            <div class="section-header">
+            <div class="section-intro">
                 <h3>📖 9折优惠券使用说明</h3>
             </div>
             <div class="guide-content">
@@ -280,6 +251,17 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="bottom-action-section">
+            <button class="primary-btn" @click="goToHotConcerts">
+                <span>🔥</span>
+                <span>查看热门演出</span>
+            </button>
+            <button class="secondary-btn" @click="goBack">
+                <span>⬅️</span>
+                <span>返回会员中心</span>
+            </button>
         </div>
 
         <div class="toast" :class="{'show': showToast}">
@@ -378,9 +360,6 @@ export default {
             const percent = Math.round((1 - discount) * 100);
             return percent + '% OFF';
         },
-        getDiscountPercent(discount) {
-            return Math.round(discount * 10);
-        },
         getVipPrice(ticket) {
             return Math.round(ticket.originalPrice * ticket.discount);
         },
@@ -425,6 +404,15 @@ export default {
                 this.showToastMessage('请升级会员解锁此优惠');
             }
         },
+        goToHotConcerts() {
+            this.showToastMessage('正在跳转到热门演出页面...');
+        },
+        goBack() {
+            this.$router.push({
+                path: '/vip',
+                name: 'vip'
+            });
+        },
         showToastMessage(message) {
             this.toastMessage = message;
             this.showToast = true;
@@ -437,23 +425,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/sass/public.scss';
-
 .concert-discount-page {
     background-color: #f5f5f5;
     min-height: 100vh;
-    padding-bottom: 20px;
+    padding-bottom: 100px;
 }
 
-.page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-    padding: 20px 15px;
-}
-
-.vip-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.benefit-banner {
+    background: #fff;
+    margin: 0 15px 15px;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    margin-top: -15px;
+    position: relative;
+    z-index: 10;
 }
 
 .banner-content {
@@ -462,46 +448,30 @@ export default {
 }
 
 .banner-icon {
-    font-size: 40px;
-    margin-right: 12px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 24px;
 }
 
-.banner-info h2 {
-    color: #fff;
+.banner-text h2 {
     font-size: 18px;
     font-weight: bold;
+    color: #333;
     margin-bottom: 4px;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.banner-info p {
-    color: rgba(255,255,255,0.9);
-    font-size: 12px;
-}
-
-.user-level-badge {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: rgba(255,255,255,0.15);
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
-}
-
-.level-icon {
-    font-size: 24px;
-    margin-bottom: 2px;
-}
-
-.level-text {
-    color: #fff;
-    font-size: 11px;
-    font-weight: 500;
+.banner-text p {
+    font-size: 13px;
+    color: #666;
 }
 
 .coupon-section {
-    background: linear-gradient(180deg, #667eea 0%, #f5f5f5 30%);
     padding: 0 15px 15px;
 }
 
@@ -509,7 +479,7 @@ export default {
     background: #fff;
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
 }
 
 .coupon-banner-content {
@@ -523,7 +493,7 @@ export default {
     align-items: center;
     justify-content: center;
     padding: 15px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
     border-radius: 12px;
     position: relative;
     margin-right: 20px;
@@ -546,11 +516,6 @@ export default {
     display: flex;
     align-items: baseline;
     color: #fff;
-}
-
-.currency {
-    font-size: 14px;
-    font-weight: 500;
 }
 
 .value {
@@ -592,7 +557,7 @@ export default {
 
 .claim-coupon-btn {
     padding: 12px 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
     border: none;
     border-radius: 25px;
     color: #fff;
@@ -601,19 +566,19 @@ export default {
     cursor: pointer;
     transition: all 0.3s ease;
     align-self: flex-start;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
+    box-shadow: 0 4px 12px rgba(229, 72, 71, 0.3);
 
-.claim-coupon-btn:hover:not(.claimed) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
+    &:hover:not(.claimed) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(229, 72, 71, 0.4);
+    }
 
-.claim-coupon-btn.claimed {
-    background: #e0e0e0;
-    color: #999;
-    cursor: not-allowed;
-    box-shadow: none;
+    &.claimed {
+        background: #e0e0e0;
+        color: #999;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
 }
 
 .coupon-tips {
@@ -630,23 +595,26 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-}
 
-.tip-icon {
-    font-size: 20px;
-    margin-bottom: 4px;
-}
+    .tip-icon {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
 
-.tip-text {
-    font-size: 12px;
-    color: #666;
-    text-align: center;
+    .tip-text {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+    }
 }
 
 .search-section {
     padding: 15px;
     background: #fff;
     margin-bottom: 10px;
+    margin: 0 15px 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .search-bar {
@@ -668,7 +636,7 @@ export default {
 }
 
 .search-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
     border: none;
     border-radius: 50%;
     width: 36px;
@@ -693,6 +661,9 @@ export default {
     background: #fff;
     padding: 15px;
     margin-bottom: 10px;
+    margin: 0 15px 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .filter-row {
@@ -733,178 +704,126 @@ export default {
 }
 
 .filter-btn:hover {
-    border-color: #667eea;
-    color: #667eea;
+    border-color: #E54847;
+    color: #E54847;
 }
 
 .filter-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-color: #667eea;
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
+    border-color: #E54847;
     color: #fff;
-}
-
-.filter-info {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-    padding: 10px 15px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.filter-tag {
-    padding: 4px 10px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    font-size: 12px;
-    border-radius: 4px;
-}
-
-.clear-btn {
-    padding: 4px 12px;
-    border: 1px solid #667eea;
-    border-radius: 4px;
-    background: #fff;
-    color: #667eea;
-    font-size: 12px;
-    cursor: pointer;
-    margin-left: auto;
 }
 
 .content-section {
     padding: 0 15px;
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+.section-intro {
     margin-bottom: 15px;
     padding: 15px;
-    background: #fff;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #fff5f5 0%, #fff9e6 100%);
+    border-radius: 10px;
+
+    h3 {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 6px;
+    }
+
+    p {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.5;
+    }
 }
 
-.header-left h3 {
-    font-size: 17px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 4px;
-}
-
-.section-desc {
-    font-size: 12px;
-    color: #999;
-}
-
-.ticket-list {
+.movie-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.ticket-card {
+.movie-card {
+    display: flex;
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
 }
 
-.ticket-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-
-.ticket-image-wrapper {
+.movie-image-wrapper {
     position: relative;
     width: 120px;
     flex-shrink: 0;
 }
 
-.ticket-image {
+.movie-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.ticket-tags {
+.movie-discount {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+    top: 8px;
+    left: 8px;
 }
 
-.tag {
-    padding: 3px 8px;
-    font-size: 10px;
-    border-radius: 4px;
-    font-weight: 500;
-}
-
-.discount-tag {
+.discount-badge {
     background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
     color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 6px;
 }
 
-.level-tag {
+.ticket-level {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.level-lock {
     background: rgba(0,0,0,0.7);
     color: #fff;
-}
-
-.ticket-discount-badge {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 8px;
-}
-
-.discount-badge-content {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-}
-
-.badge-label {
     font-size: 10px;
-    color: rgba(255,255,255,0.9);
-    margin-right: 4px;
+    padding: 2px 6px;
+    border-radius: 6px;
 }
 
-.badge-value {
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-}
-
-.ticket-content {
+.movie-content {
     flex: 1;
-    padding: 12px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
 }
 
-.ticket-title {
+.movie-name {
     font-size: 15px;
     font-weight: bold;
     color: #333;
     margin-bottom: 8px;
-    line-height: 1.4;
+    line-height: 1.3;
     display: -webkit-box;
+    display: box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
+    box-orient: vertical;
     overflow: hidden;
 }
 
-.ticket-meta {
+.movie-meta {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -925,7 +844,7 @@ export default {
 
 .category-tag {
     padding: 3px 10px;
-    background: #f0f0f0;
+    background: #f5f5f5;
     color: #666;
     font-size: 11px;
     border-radius: 4px;
@@ -936,11 +855,11 @@ export default {
     color: #999;
 }
 
-.ticket-price-section {
+.movie-price-section {
+    margin-top: auto;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 10px;
 }
 
 .price-info {
@@ -963,14 +882,14 @@ export default {
 
 .vip-label {
     font-size: 11px;
-    color: #667eea;
+    color: #E54847;
     margin-right: 4px;
 }
 
 .price-value {
     font-size: 20px;
     font-weight: bold;
-    color: #667eea;
+    color: #E54847;
 }
 
 .save-amount {
@@ -981,46 +900,38 @@ export default {
     border-radius: 4px;
 }
 
-.ticket-action {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
 .buy-btn {
-    padding: 8px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
     border: none;
     border-radius: 20px;
     color: #fff;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
+    transition: all 0.3s ease;
 
-.buy-btn:hover:not(.locked) {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
+    &:hover:not(.locked) {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(229, 72, 71, 0.3);
+    }
 
-.buy-btn.locked {
-    background: #e0e0e0;
-    color: #999;
-    cursor: not-allowed;
-    box-shadow: none;
+    &.locked {
+        background: #e0e0e0;
+        color: #999;
+        cursor: not-allowed;
+    }
 }
 
 .empty-state {
     text-align: center;
-    padding: 50px 20px;
+    padding: 60px 20px;
     background: #fff;
     border-radius: 12px;
 }
 
 .empty-icon {
-    font-size: 60px;
+    font-size: 48px;
     margin-bottom: 15px;
 }
 
@@ -1037,7 +948,7 @@ export default {
 
 .reset-btn {
     padding: 10px 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
     border: none;
     border-radius: 20px;
     color: #fff;
@@ -1051,14 +962,11 @@ export default {
     padding: 0 15px;
 }
 
-.usage-guide-section .section-header {
-    margin-bottom: 15px;
-}
-
 .guide-content {
     background: #fff;
     border-radius: 12px;
     padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .guide-item {
@@ -1090,6 +998,63 @@ export default {
     line-height: 1.5;
 }
 
+.bottom-action-section {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 15px;
+    display: flex;
+    gap: 15px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    z-index: 100;
+}
+
+.primary-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #E54847 0%, #ff6b6b 100%);
+    border: none;
+    border-radius: 25px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(229, 72, 71, 0.3);
+    }
+}
+
+.secondary-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 20px;
+    background: #f5f5f5;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    color: #666;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: #f0f0f0;
+        border-color: #ccc;
+    }
+}
+
 .toast {
     position: fixed;
     top: 50%;
@@ -1106,11 +1071,11 @@ export default {
     transition: all 0.3s ease;
     max-width: 80%;
     text-align: center;
-}
 
-.toast.show {
-    opacity: 1;
-    visibility: visible;
+    &.show {
+        opacity: 1;
+        visibility: visible;
+    }
 }
 
 @media (max-width: 360px) {
@@ -1128,13 +1093,13 @@ export default {
         display: none;
     }
 
-    .ticket-price-section {
+    .movie-price-section {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
     }
 
-    .ticket-action {
+    .buy-btn {
         width: 100%;
     }
 
@@ -1146,6 +1111,10 @@ export default {
     .tip-item {
         flex: 1;
         min-width: 80px;
+    }
+
+    .bottom-action-section {
+        flex-direction: column;
     }
 }
 </style>
